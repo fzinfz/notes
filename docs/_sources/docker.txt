@@ -1,0 +1,228 @@
+
+.. code:: python
+
+    docker run -it --entrypoint=/bin/bash $IMAGE -i
+
+.. code:: python
+
+    docker run -it -d continuumio/anaconda3
+
+
+.. parsed-literal::
+
+    0b074fd14d56742452a875c86f6f391bc75cd692b11f1c7ad5eace819db7a50e
+
+
+.. code:: python
+
+    docker ps
+
+
+.. parsed-literal::
+
+    CONTAINER ID        IMAGE                   COMMAND                  CREATED             STATUS              PORTS               NAMES
+    0b074fd14d56        continuumio/anaconda3   "/usr/bin/tini -- /bi"   10 seconds ago      Up 10 seconds                           angry_colden
+
+
+.. code:: python
+
+    docker attach 0b074fd14d56
+
+.. code:: python
+
+    docker exec -it 665b4a1e17b6 /bin/bash
+
+.. code:: python
+
+    docker images
+
+
+.. parsed-literal::
+
+    REPOSITORY              TAG                 IMAGE ID            CREATED             SIZE
+    fzinfz/jupyter          0.2-addBash         a653e265abb0        About an hour ago   801.9 MB
+    fzinfz/jupyter          latest              a653e265abb0        About an hour ago   801.9 MB
+    ipython/notebook        latest              350415f37e2c        3 days ago          816.6 MB
+    python                  3.5.2               a08871375fac        3 days ago          684.2 MB
+    continuumio/anaconda3   latest              4480582d0805        11 days ago         1.878 GB
+    continuumio/miniconda   latest              68829a8b7882        11 days ago         433.8 MB
+    golang                  latest              f24c8478ed40        2 weeks ago         744.1 MB
+    alpine                  latest              4e38e38c8ce0        7 weeks ago         4.795 MB
+
+
+.. code:: python
+
+    docker tag a653e265abb0  fzinfz/jupyter:latest
+
+
+.. parsed-literal::
+
+    
+
+.. code:: python
+
+    docker rmi -f fzinfz/jupyter:0.1
+
+
+.. parsed-literal::
+
+    Untagged: fzinfz/jupyter:0.1
+
+
+.. code:: python
+
+    docker run -it --entrypoint=/bin/bash $IMAGE -i
+
+.. code:: python
+
+    docker commit -c "EXPOSE 8888" 37cdc2e7328b    fzinfz/jupyter:0.2-addBash
+
+.. code:: python
+
+    docker history  continuumio/anaconda3
+
+
+.. parsed-literal::
+
+    IMAGE               CREATED             CREATED BY                                      SIZE                COMMENT
+    4480582d0805        11 days ago         /bin/sh -c #(nop) CMD ["/bin/bash"]             0 B                 
+    <missing>           11 days ago         /bin/sh -c #(nop) ENTRYPOINT ["/usr/bin/tini"   0 B                 
+    <missing>           11 days ago         /bin/sh -c #(nop) ENV PATH=/opt/conda/bin:/us   0 B                 
+    <missing>           11 days ago         /bin/sh -c apt-get install -y curl grep sed d   2.295 MB            
+    <missing>           11 days ago         /bin/sh -c echo 'export PATH=/opt/conda/bin:$   1.556 GB            
+    <missing>           11 days ago         /bin/sh -c apt-get update --fix-missing && ap   195 MB              
+    <missing>           11 days ago         /bin/sh -c #(nop) ENV LANG=C.UTF-8 LC_ALL=C.U   0 B                 
+    <missing>           11 days ago         /bin/sh -c #(nop) MAINTAINER Kamil Kwiek <kam   0 B                 
+    <missing>           2 weeks ago         /bin/sh -c #(nop) CMD ["/bin/bash"]             0 B                 
+    <missing>           2 weeks ago         /bin/sh -c #(nop) ADD file:0e0565652aa852f620   125.1 MB            
+
+
+.. code:: python
+
+    docker tag local-image:tagname fzinfz/ferro:tagname
+    docker push fzinfz/ferro:tagname
+
+.. code:: python
+
+    stop all containers:
+    docker kill $(docker ps -q)
+    
+    remove all containers
+    docker rm $(docker ps -a -q)
+    
+    remove all docker images
+    docker rmi $(docker images -q)
+
+Install
+=======
+
+Linux
+-----
+
+| https://docs.docker.com/engine/getstarted/linux\_install\_help/
+| kernel must be 3.10 at minimum, which CentOS 7 runs.
+
+::
+
+    $ curl -fsSL https://get.docker.com/ | sh
+
+CentOS
+~~~~~~
+
+https://docs.docker.com/engine/installation/linux/centos/
+
+::
+
+    $ sudo tee /etc/yum.repos.d/docker.repo <<-'EOF'
+    [dockerrepo]
+    name=Docker Repository
+    baseurl=https://yum.dockerproject.org/repo/main/centos/7/
+    enabled=1
+    gpgcheck=1
+    gpgkey=https://yum.dockerproject.org/gpg
+    EOF
+
+    sudo yum install docker-engine
+
+    sudo service docker start
+    sudo chkconfig docker on
+
+Linux based On Windows/Mac
+--------------------------
+
+| https://docs.docker.com/engine/installation/windows/
+| https://docs.docker.com/machine/drivers/
+| Bugs:
+| https://forums.docker.com/t/how-can-i-ssh-into-the-betas-mobylinuxvm/10991/
+
+Windows Container
+~~~~~~~~~~~~~~~~~
+
+https://msdn.microsoft.com/en-us/virtualization/windowscontainers/quick\_start/quick\_start\_windows\_server
+
+https://blogs.msdn.microsoft.com/jcorioland/2016/04/28/getting-started-with-containers-and-docker-on-windows-server-2016-technical-preview-5/
+
+::
+
+    Install-WindowsFeature containers
+    Restart-Computer -Force
+
+    New-Item -Type Directory -Path 'C:\Program Files\docker\'
+    Invoke-WebRequest https://aka.ms/tp5/b/dockerd -OutFile $env:ProgramFiles\docker\dockerd.exe -UseBasicParsing
+    Invoke-WebRequest https://aka.ms/tp5/b/docker -OutFile $env:ProgramFiles\docker\docker.exe -UseBasicParsing
+
+    [Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\Program Files\Docker", [EnvironmentVariableTarget]::Machine)
+
+    dockerd --register-service
+    Start-Service docker
+
+    Install-PackageProvider ContainerImage -Force
+    Install-ContainerImage -Name WindowsServerCore
+    Restart-Service docker
+
+Registry
+========
+
+China Mirrors
+-------------
+
+| https://hpc.aliyun.com/doc/docker%E9%95%9C%E5%83%8F%E6%9C%8D%E5%8A%A1
+| https://servers.ustclug.org/2015/05/new-docker-hub-registry-mirror/
+
+::
+
+    docker login -u anonymouse -p anonymouse docker.mirrors.ustc.edu.cn 
+
+Systemd
+~~~~~~~
+
+https://servers.ustclug.org/2015/05/new-docker-hub-registry-mirror/
+
+boot2docker
+~~~~~~~~~~~
+
+::
+
+    echo EXTRA_ARGS="--registry-mirror=https://docker.mirrors.ustc.edu.cn"  >>  /var/lib/boot2docker/profile
+
+Deploying a registry server
+---------------------------
+
+https://github.com/docker/distribution/blob/master/docs/deploying.md
+
+.. code:: python
+
+    docker run -d -p 5000:5000 --restart=always --name registry registry:2
+
+.. code:: python
+
+    docker info | grep Registry
+
+
+.. parsed-literal::
+
+     WARNING: Usage of loopback devices is strongly discouraged for production use. Either use `--storage-opt dm.thinpooldev` or use `--storage-opt dm.no_warn_on_loop_devices=true` to suppress this warning.
+    WARNING: bridge-nf-call-iptables is disabled
+    WARNING: bridge-nf-call-ip6tables is disabled
+    [01;31m[KRegistry[m[K: https://index.docker.io/v1/
+

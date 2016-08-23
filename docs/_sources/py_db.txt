@@ -1,0 +1,119 @@
+
+DB
+==
+
+MySQL
+-----
+
+| pip2 install mysql
+| http://dev.mysql.com/doc/connector-python/en/connector-python-example-cursor-transaction.html
+| pip3 install PyMySQL
+| https://github.com/PyMySQL/PyMySQL/
+
+.. code:: python
+
+    import pymysql.cursors
+    
+    # Connect to the database 
+    connection = pymysql.connect(host='mysqlserver',
+                                 user='root',
+                                 passwd='...',
+                                 db='innodb',
+                                 charset='utf8mb4',
+                                 cursorclass=pymysql.cursors.DictCursor)
+    try:    
+        with connection.cursor() as cursor:
+            # Create a new record
+            sql = "INSERT INTO `page` (`job_start`, `site` ,`url`) VALUES (%s,%s,'http://')"
+            cursor.execute(sql, (now, 'test',))
+            print(cursor.lastrowid)  #get AUTO_INCREMENT id
+        connection.commit()
+        
+        with connection.cursor() as cursor:
+            #sql = "SHOW FULL PROCESSLIST" #\G"
+            # Read a single record
+            sql = "SELECT `url`, `id` FROM `page` WHERE `site`=%s"        
+            cursor.execute(sql, ('test',))
+            result = cursor.fetchone()
+            print(result)
+    finally:
+        connection.close()   
+        
+    cursor = connection.cursor()               
+    cursor.callproc('shop_diff', ('111','222',))
+    r = cursor.fetchall()
+    cursor.close
+    connection.close
+    r    
+
+MangoDB
+-------
+
+.. code:: python
+
+    from pymongo import MongoClient
+    client = MongoClient()
+    client = MongoClient('localhost', 270188)  #random port, no error???
+    client.test_database
+
+
+
+
+.. parsed-literal::
+
+    Database(MongoClient('localhost', 270188), 'test_database')
+
+
+
+Redis
+-----
+
+| https://github.com/andymccurdy/redis-py
+| https://kushal.fedorapeople.org/redis-py/html/api.html
+| http://www.the5fire.com/python-simple-redis.html
+
+.. code:: python
+
+    import redis
+    rr = redis.StrictRedis(host='rediscache', port=6379, db=0)
+    
+    pool = redis.ConnectionPool(host='rediscache', port=6379, db=0)
+    rrr = redis.Redis(connection_pool=pool)
+    
+    rr.set('name', {'shopid':111})  # set(name, value)
+    eval(rr.get('name'))['shopid']  # 111
+    
+    rr.hmset('test',{'shopid':1111})  # hset(name, key, value), hmset(name, mapping)   
+    rr.hget('test','shopid')          # b'1111'
+
+AWS dynamodb
+------------
+
+| http://boto.readthedocs.org/en/latest/dynamodb2\_tut.html
+| http://boto.readthedocs.org/en/latest/ref/dynamodb2.html
+| http://boto.readthedocs.org/en/latest/migrations/dynamodb\_v1\_to\_v2.html
+
+.. code:: python
+
+    from boto.dynamodb2.table import Table
+    from boto.dynamodb2.items import Item
+    import boto.dynamodb2
+    
+    def conn_dynamodb():  
+        return boto.dynamodb2.connect_to_region(
+                           'ap-southeast-1',
+                           aws_access_key_id='...',
+                           aws_secret_access_key='...')     
+    
+    t = Table('shop',connection=conn_dynamodb())
+    Item(t,data={'id':5555, 'Col2': 1}).save()
+    
+    try:  
+        item = t.get_item(id=5555)
+    except boto.dynamodb2.exceptions.ItemNotFound:
+        pass
+    d=dict(item)
+    d.pop("html") #remove unused key and its value
+    
+    i['Col2'] = [2,'hello',None]  #str('None') for None
+    i.save()

@@ -1,0 +1,32 @@
+
+.. code:: python
+
+    docker login --username=fzinfz --email=fzinfz@gmail.com
+
+.. code:: python
+
+    from notebook.auth import passwd
+    passwd('159632*docker')
+
+
+
+
+.. parsed-literal::
+
+    'sha1:b249884bb46c:88571681ec5af08dc77e426179262d06b6a6383c'
+
+
+
+.. code:: python
+
+    from notebook.auth.security import *
+    passwd_check('sha1:45844c753b22:ebba6490b8a45025b1dc71cc8ce47914439ac417','159632*docker')
+
+
+
+
+.. parsed-literal::
+
+    True
+
+
