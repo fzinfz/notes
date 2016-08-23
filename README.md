@@ -1,1 +1,1 @@
-My coding notes written in jupyter.
+My DevOps notes written in Jupyter.
