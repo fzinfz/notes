@@ -1,6 +1,6 @@
 set -e
 
-apt install -y python2 || yum install -y python2
+apt install -y python-dev || yum install -y python-dev
 
 curl https://sdk.cloud.google.com | bash
 
