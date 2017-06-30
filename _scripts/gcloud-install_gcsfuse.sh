@@ -1,0 +1,1 @@
+export GCSFUSE_REPO=gcsfuse-zesty && gcloud-install_gcsfuse.sh echo "deb http://packages.cloud.google.com/apt gcsfuse-zesty main" |  tee /etc/apt/sources.list.d/gcsfuse.list && gcloud-install_gcsfuse.sh curl https://packages.cloud.google.com/apt/doc/apt-key.gpg |  apt-key add - && gcloud-install_gcsfuse.sh apt-get update && gcloud-install_gcsfuse.sh apt-get install -y gcsfuse EOL
