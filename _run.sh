@@ -12,8 +12,10 @@ case $p in
 		;;
 	dd_bw )
 		cmd="dd if=/dev/zero of=/root/testfile bs=200M count=1 oflag=direct"
+		;;
 	dd_iops )
 		cmd="dd if=/dev/zero of=/root/testfile bs=512 count=1000 oflag=direct"
+		;;
 	*)
 esac
 
