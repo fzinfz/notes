@@ -1,3 +1,5 @@
+#!/bin/bash
+
 p=$1
 shift
 
